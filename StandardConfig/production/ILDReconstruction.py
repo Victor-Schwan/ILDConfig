@@ -11,6 +11,7 @@ from Configurables import (
     MarlinProcessorWrapper,
     PodioInput,
     PodioOutput,
+    TrackingCellIDEncodingSvc,
     k4DataSvc,
 )
 from Gaudi.Configuration import INFO
@@ -151,6 +152,12 @@ geoSvc.detectors = [compact_file]
 geoSvc.OutputLevel = INFO
 geoSvc.EnableGeant4Geo = False
 svcList.append(geoSvc)
+
+cellIDSvc = TrackingCellIDEncodingSvc("CellIDSvc")
+cellIDSvc.EncodingStringParameterName = "GlobalTrackerReadoutID"
+cellIDSvc.GeoSvcName = geoSvc.name()
+cellIDSvc.OutputLevel = INFO
+svcList.append(cellIDSvc)
 
 
 CONSTANTS = {
