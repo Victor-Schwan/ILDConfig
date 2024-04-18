@@ -18,3 +18,6 @@ MarlinStdRecoParsed.xml
 
 # Output for ranlux
 Ranlux.coonf
+
+# Negate pattern for weirdHit files
+!weirdHits_*
