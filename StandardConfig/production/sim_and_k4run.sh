@@ -8,6 +8,8 @@
 #
 ########################################
 
+DataDir="data/"
+
 # Function to print messages in specified color and make sure there's an empty line before and after the message
 print_color() {
     # ANSI yellow
@@ -39,7 +41,8 @@ fi
 # Assign arguments to variables for clearer access
 Name=$1
 DetVer=$2
-SIM_file_name=${Name}_${DetVer}_SIM.slcio
+SIM_file_name=${DataDir}${Name}_${DetVer}_SIM.slcio
+print_color "Output will be written to: $SIM_file_name"
 
 # Define associative arrays for DetVer_LookUp1 and DetVer_LookUp2
 declare -A DetVer_LookUp1
@@ -60,28 +63,26 @@ if [[ -z ${DetVer_LookUp1[$DetVer]} ]] || [[ -z ${DetVer_LookUp2[$DetVer]} ]]; t
     exit 1
 fi
 
-# Command 1: ddsim
-if [ $VERBOSE -eq 1 ]; then
-    ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py
-else
-    ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py &> /dev/null
-fi
+# Build the ddsim command
+ddsim_cmd="ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py"
+[[ $VERBOSE -eq 0 ]] && ddsim_cmd+=" &> /dev/null"
 
-# Check if ddsim command was successful
+# Print and execute ddsim command
+print_color "Executing command: $ddsim_cmd"
+eval $ddsim_cmd
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
     print_color "ddsim command failed with exit code $EXIT_CODE"
     exit $EXIT_CODE
 fi
 
-# Command 2: k4run
-if [ $VERBOSE -eq 1 ]; then
-    k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput only --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${Name}_${DetVer} --noBeamCalReco --trackingOnly
-else
-    k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput only --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${Name}_${DetVer} --noBeamCalReco --trackingOnly &> /dev/null
-fi
+# Build the k4run command
+k4run_cmd="k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput only --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
+[[ $VERBOSE -eq 0 ]] && k4run_cmd+=" &> /dev/null"
 
-# Check if k4run command was successful
+# Print and execute k4run command
+print_color "Executing command: $k4run_cmd"
+eval $k4run_cmd
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
     print_color "k4run command failed with exit code $EXIT_CODE"
