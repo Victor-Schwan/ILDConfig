@@ -22,7 +22,7 @@ except ImportError:
 from k4FWCore.parseArgs import parser
 from k4MarlinWrapper.parseConstants import parseConstants
 
-# only non-FCCMDI models
+# only non-FCCeeMDI models
 DETECTOR_MODELS = (
     "ILD_l2_v02",
     "ILD_l4_o1_v02",
@@ -47,7 +47,7 @@ DETECTOR_MODELS = (
     "ILD_s5_o3_v02",
     "ILD_s5_o4_v02",
 )
-# only FCCMDI
+# only FCCeeMDI
 FCCeeMDI_DETECTOR_MODELS = (
     "ILD_l5_o1_v09",
     "ILD_l5_v11",
@@ -357,5 +357,5 @@ if reco_args.lcioOutput in ("on", "only"):
     algList.append(DSTOutput)
 
 ApplicationMgr(
-    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=INFO
+    TopAlg=algList, EvtSel="NONE", EvtMax=-1, ExtSvc=svcList, OutputLevel=INFO
 )
