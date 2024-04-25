@@ -3,8 +3,9 @@
 ########################################
 #
 # if the muon gun is not used any longer, change names!?
-# 
 # if more ifs to commands, built the commands in several steps instead of one step with many ifs?
+#
+# example command: ./sim_and_k4run.sh debugTPCedm4hep v11 [-v]
 #
 ########################################
 
@@ -77,7 +78,7 @@ if [ $EXIT_CODE -ne 0 ]; then
 fi
 
 # Build the k4run command
-k4run_cmd="k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput only --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
+k4run_cmd="k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput off --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
 [[ $VERBOSE -eq 0 ]] && k4run_cmd+=" &> /dev/null"
 
 # Print and execute k4run command
