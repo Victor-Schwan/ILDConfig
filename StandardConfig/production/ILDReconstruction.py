@@ -48,7 +48,7 @@ DETECTOR_MODELS = (
     "ILD_s5_o3_v02",
     "ILD_s5_o4_v02",
 )
-# only FCCeeMDI
+# only FCCMDI
 FCCeeMDI_DETECTOR_MODELS = (
     "ILD_l5_o1_v09",
     "ILD_l5_v11",
@@ -375,5 +375,5 @@ if reco_args.lcioOutput in ("on", "only"):
     algList.append(DSTOutput)
 
 ApplicationMgr(
-    TopAlg=algList, EvtSel="NONE", EvtMax=-1, ExtSvc=svcList, OutputLevel=INFO
+    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=INFO
 )
