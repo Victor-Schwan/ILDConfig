@@ -25,6 +25,11 @@ print_color() {
     echo
 }
 
+# use local k4geo
+unset k4geo_DIR
+export k4geo_DIR="~/promotion/code/k4geo/"
+print_color "Switched to local k4geo"
+
 # Check if the verbose flag is set
 VERBOSE=0
 for arg in "$@"; do
