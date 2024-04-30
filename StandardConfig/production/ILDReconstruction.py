@@ -12,8 +12,9 @@ from Configurables import (
     PodioInput,
     PodioOutput,
     k4DataSvc,
+    TrackingCellIDEncodingSvc,
 )
-from Gaudi.Configuration import INFO
+from Gaudi.Configuration import INFO, DEBUG
 
 try:
     from k4FWCore.utils import SequenceLoader, import_from
@@ -147,6 +148,12 @@ geoSvc.OutputLevel = INFO
 geoSvc.EnableGeant4Geo = False
 svcList.append(geoSvc)
 
+cellIDSvc = TrackingCellIDEncodingSvc("CellIDSvc")
+cellIDSvc.EncodingStringParameterName = "GlobalTrackerReadoutID"
+cellIDSvc.GeoSvcName = geoSvc.name()
+cellIDSvc.OutputLevel = INFO
+svcList.append(cellIDSvc)
+
 
 CONSTANTS = {
     "CMSEnergy": str(reco_args.cmsEnergy),
@@ -198,7 +205,7 @@ else:
 
 
 MyAIDAProcessor = MarlinProcessorWrapper("MyAIDAProcessor")
-MyAIDAProcessor.OutputLevel = INFO
+MyAIDAProcessor.OutputLevel = DEBUG
 MyAIDAProcessor.ProcessorType = "AIDAProcessor"
 MyAIDAProcessor.Parameters = {
     "Compress": ["1"],
@@ -375,5 +382,5 @@ if reco_args.lcioOutput in ("on", "only"):
     algList.append(DSTOutput)
 
 ApplicationMgr(
-    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=INFO
+    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=DEBUG
 )
