@@ -33,7 +33,7 @@ done
 
 # Check if the necessary number of arguments are passed (adjust as since the verbose flag is now an option)
 if [[ "$#" -lt 2 ]]; then
-    print_color "Usage: $0 <Name> <DetVer> [v|verbose] [d|dry-run]"
+    print_color "Usage: $0 <Name> <DetectorVersion> [v|verbose] [d|dry-run]"
     exit 1
 fi
 
