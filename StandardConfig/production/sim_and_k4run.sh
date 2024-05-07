@@ -1,53 +1,46 @@
 #!/bin/bash
 
-########################################
-#
-# if the muon gun is not used any longer, change names!?
-# if more ifs to commands, built the commands in several steps instead of one step with many ifs?
-#
-# example command: ./sim_and_k4run.sh debugTPCedm4hep v11 [-v]
-#
-########################################
-
+######################################
+# example command: ./sim_and_k4run.sh trialRun v11 [v|verbose] [d|dry-run]
+#####################################
 DataDir="data/"
 
-# Function to print messages in specified color and make sure there's an empty line before and after the message
+# Function to print messages in specified color
 print_color() {
     # ANSI yellow
     local YELLOW='\033[1;33m'
     # ANSI no color (reset)
     local NC='\033[0m'
-    # Prefix for identification
     local PREFIX="[ sim_and_k4run ]:"
-    # Print empty line, colored message with prefix, and another empty line
     echo
     echo -e "${YELLOW}${PREFIX}${NC} $1"
     echo
 }
 
-# use local k4geo
 unset k4geo_DIR
-export k4geo_DIR="~/promotion/code/k4geo/"
+export k4geo_DIR="$HOME/promotion/code/k4geo/"
 print_color "Switched to local k4geo"
 
-# Check if the verbose flag is set
 VERBOSE=0
+DRY_MODE=0
 for arg in "$@"; do
-    if [[ "$arg" == "-v" || "$arg" == "--verbose" ]]; then
+    if [[ "$arg" == "v" || "$arg" == "verbose" ]]; then
         VERBOSE=1
+    elif [[ "$arg" == "d" || "$arg" == "dry-run" ]]; then
+        DRY_MODE=1
     fi
 done
 
 # Check if the necessary number of arguments are passed (adjust as since the verbose flag is now an option)
 if [[ "$#" -lt 2 ]]; then
-    print_color "Usage: $0 <Name> <DetVer> [-v|--verbose]"
+    print_color "Usage: $0 <Name> <DetVer> [v|verbose] [d|dry-run]"
     exit 1
 fi
 
 # Assign arguments to variables for clearer access
 Name=$1
 DetVer=$2
-SIM_file_name=${DataDir}${Name}_${DetVer}_SIM.slcio
+SIM_file_name=${DataDir}${Name}_${DetVer}_SIM.edm4hep.root
 print_color "Output will be written to: $SIM_file_name"
 
 # Define associative arrays for DetVer_LookUp1 and DetVer_LookUp2
@@ -72,27 +65,32 @@ fi
 # Build the ddsim command
 ddsim_cmd="ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py"
 [[ $VERBOSE -eq 0 ]] && ddsim_cmd+=" &> /dev/null"
-
-# Print and execute ddsim command
 print_color "Executing command: $ddsim_cmd"
-eval $ddsim_cmd
-EXIT_CODE=$?
-if [ $EXIT_CODE -ne 0 ]; then
-    print_color "ddsim command failed with exit code $EXIT_CODE"
-    exit $EXIT_CODE
+
+if [[ $DRY_MODE -eq 0 ]]; then
+    eval $ddsim_cmd
+    EXIT_CODE=$?
+    if [ $EXIT_CODE -ne 0 ]; then
+        print_color "ddsim command failed with exit code $EXIT_CODE"
+        exit $EXIT_CODE
+    fi
 fi
 
-# Build the k4run command
 k4run_cmd="k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput off --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
 [[ $VERBOSE -eq 0 ]] && k4run_cmd+=" &> /dev/null"
-
-# Print and execute k4run command
 print_color "Executing command: $k4run_cmd"
-eval $k4run_cmd
-EXIT_CODE=$?
-if [ $EXIT_CODE -ne 0 ]; then
-    print_color "k4run command failed with exit code $EXIT_CODE"
-    exit $EXIT_CODE
+
+if [[ $DRY_MODE -eq 0 ]]; then
+    eval $k4run_cmd
+    EXIT_CODE=$?
+    if [ $EXIT_CODE -ne 0 ]; then
+        print_color "k4run command failed with exit code $EXIT_CODE"
+        exit $EXIT_CODE
+    fi
 fi
 
-print_color "Both commands executed successfully"
+if [[ $DRY_MODE -eq 1 ]]; then
+    print_color "Dry mode activated: Commands printed but not executed"
+else
+    print_color "Both commands executed successfully"
+fi
