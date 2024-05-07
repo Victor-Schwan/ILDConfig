@@ -37,11 +37,11 @@ MyClupatraProcessor.Parameters = {
 }
 
 MyConformalTracking = MarlinProcessorWrapper("MyConformalTracking")
-MyConformalTracking.OutputLevel = INFO
+MyConformalTracking.OutputLevel = DEBUG
 MyConformalTracking.ProcessorType = "ConformalTrackingV2"
 MyConformalTracking.Parameters = {
     "DebugHits": ["DebugHits"],
-    "DebugPlots": ["false"],
+    "DebugPlots": ["true"],
     "DebugTiming": ["false"],
     "MCParticleCollectionName": ["MCParticle"],
     "MaxHitInvertedFit": ["0"],
@@ -83,7 +83,7 @@ MyConformalTracking.Parameters = {
         "InnerTrackerEndcapHits",
     ],
     "trackPurity": ["0.7"],
-    # "Verbosity": ["DEBUG"],
+    "Verbosity": ["DEBUG"],
 }
 
 
