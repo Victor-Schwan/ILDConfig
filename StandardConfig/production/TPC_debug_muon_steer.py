@@ -13,7 +13,7 @@ from g4units import GeV, MeV, m, mm, rad
 SIM = DD4hepSimulation()
 
 ## The compact XML file
-SIM.compactFile = "" # os.path.join( os.environ.get("k4geo_DIR"), "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml" )
+SIM.compactFile = ""  # os.path.join( os.environ.get("k4geo_DIR"), "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml" )
 ## Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 7.0e-3 * rad
 SIM.enableDetailedShowerMode = True
@@ -25,7 +25,7 @@ SIM.inputFiles = []
 ## Macro file to execute for runType 'run' or 'vis'
 SIM.macroFile = ""
 ## number of events to simulate, used in batch mode
-SIM.numberOfEvents = 100
+SIM.numberOfEvents = 10000
 ## Outputfile from the simulation,only lcio output is supported
 SIM.outputFile = "dummyOutput.slcio"
 ## Physics list to use in simulation
@@ -181,7 +181,7 @@ SIM.gun.direction = (0, 1, 1)
 ##
 ##     Setting a distribution will set isotrop = True
 ##
-SIM.gun.distribution = None
+SIM.gun.distribution = "uniform"
 SIM.gun.energy = 10000.0
 
 ##  isotropic distribution for the particle gun
