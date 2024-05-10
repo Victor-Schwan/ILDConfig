@@ -25,7 +25,7 @@ SIM.inputFiles = []
 ## Macro file to execute for runType 'run' or 'vis'
 SIM.macroFile = ""
 ## number of events to simulate, used in batch mode
-SIM.numberOfEvents = 10000
+SIM.numberOfEvents = 10
 ## Outputfile from the simulation,only lcio output is supported
 SIM.outputFile = "dummyOutput.slcio"
 ## Physics list to use in simulation
@@ -114,7 +114,7 @@ SIM.field.stepper = "HelixSimpleRunge"
 ################################################################################
 ## Configuration for sensitive detector filters
 ##
-##   Set the default filter for tracker or caliromter
+##   Set the default filter for tracker or calorimeter
 ##   >>> SIM.filter.tracker = "edep1kev"
 ##   >>> SIM.filter.calo = ""
 ##
