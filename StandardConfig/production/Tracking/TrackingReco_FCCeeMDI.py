@@ -11,23 +11,21 @@ MyTruthTrackFinder.ProcessorType = "TruthTrackFinder"
 MyTruthTrackFinder.Parameters = {
     "FitForward": ["true"],
     "MCParticleCollectionName": ["MCParticle"],
-    "SiTrackCollectionName": ["SiTracks"],
+    "SiTrackCollectionName": ["SiTracksTrue"],
     "SiTrackRelationCollectionName": ["SiTrackRelations"],
     "SimTrackerHitRelCollectionNames": [
-        "VXDTrackerHitRelations",
-        "InnerTrackerBarrelHitsRelations",
-        "OuterTrackerBarrelHitsRelations",
-        "VXDEndcapTrackerHitRelations",
-        "InnerTrackerEndcapHitsRelations",
-        "OuterTrackerEndcapHitsRelations",
+        "VertexBarrelTrackerHitRelations ",
+        "InnerTrackerBarrelHitRelations",
+        "SETTrackerHitRelations",
+        "VertexEndcapTrackerHitRelations",
+        "InnerTrackerEndcapHitRelations",
     ],
     "TrackerHitCollectionNames": [
-        "VXDTrackerHits",
-        "ITrackerHits",
-        "OTrackerHits",
-        "VXDEndcapTrackerHits",
-        "ITrackerEndcapHits",
-        "OTrackerEndcapHits",
+        "VertexBarrelTrackerHits",
+        "InnerTrackerBarrelHits",
+        "SETTrackerHits",
+        "VertexEndcapTrackerHits",
+        "InnerTrackerEndcapHits",
     ],
     "UseTruthInPrefit": ["false"],
 }
@@ -59,7 +57,7 @@ MyClupatraProcessor.Parameters = {
     "TrackIsCurlerOmega": ["0.001"],
     "TrackStartsInnerDist": ["25"],
     "TrackSystemName": ["DDKalTest"],
-    "VXDHitCollection": ["VXDTrackerHits"],
+    "VXDHitCollection": ["VertexBarrelTrackerHits", "VertexEndcapTrackerHits"],
     "pickUpSiHits": ["false"],
 }
 
@@ -84,12 +82,12 @@ MyConformalTracking.Parameters = {
     "SortTreeResults": ["true"],
     # fmt: off
     "Steps": [
-        "[VXDBarrel]",
+        "[VertexBarrel]",
         "@Collections", ":", "VertexBarrelTrackerHits",
         "@Parameters", ":", "MaxCellAngle", ":", "0.01;", "MaxCellAngleRZ", ":", "0.01;", "Chi2Cut", ":", "100;", "MinClustersOnTrack", ":", "4;", "MaxDistance", ":", CT_MAX_DIST, "SlopeZRange:", "10.0;", "HighPTCut:", "10.0;",
         "@Flags", ":", "HighPTFit,", "VertexToTracker",
         "@Functions", ":", "CombineCollections,", "BuildNewTracks",
-        "[VXDEncap]",
+        "[VertexEncap]",
         "@Collections", ":", "VertexEndcapTrackerHits",
         "@Parameters", ":", "MaxCellAngle", ":", "0.01;", "MaxCellAngleRZ", ":", "0.01;", "Chi2Cut", ":", "100;", "MinClustersOnTrack", ":", "4;", "MaxDistance", ":", CT_MAX_DIST, "SlopeZRange:", "10.0;", "HighPTCut:", "10.0;",
         "@Flags", ":", "HighPTFit,", "VertexToTracker",
@@ -114,10 +112,10 @@ MyConformalTracking.Parameters = {
 }
 
 # copied from https://github.com/gaswk/CLDConfig/blob/main/CLDConfig/CLDReconstruction.py
-ClonesAndSplitTracksFinder = MarlinProcessorWrapper("ClonesAndSplitTracksFinder")
-ClonesAndSplitTracksFinder.OutputLevel = DEBUG
-ClonesAndSplitTracksFinder.ProcessorType = "ClonesAndSplitTracksFinder"
-ClonesAndSplitTracksFinder.Parameters = {
+MyClonesAndSplitTracksFinder = MarlinProcessorWrapper("MyClonesAndSplitTracksFinder")
+MyClonesAndSplitTracksFinder.OutputLevel = DEBUG
+MyClonesAndSplitTracksFinder.ProcessorType = "ClonesAndSplitTracksFinder"
+MyClonesAndSplitTracksFinder.Parameters = {
     "EnergyLossOn": ["true"],
     "InputTrackCollectionName": ["SiTracksCT"],
     "MultipleScatteringOn": ["true"],
@@ -133,6 +131,8 @@ ClonesAndSplitTracksFinder.Parameters = {
 
 
 TrackingReco_FCCeeMDISequence = [
+    MyTruthTrackFinder,
     MyClupatraProcessor,
     MyConformalTracking,
+    MyClonesAndSplitTracksFinder,
 ]
