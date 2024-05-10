@@ -5,6 +5,33 @@ from Gaudi.Configuration import DEBUG, INFO
 
 CT_MAX_DIST = "0.03;"  # semi-colon is important! RANDOM VALUE COPYIED FROM CLDRECO
 
+MyTruthTrackFinder = MarlinProcessorWrapper("MyTruthTrackFinder")
+MyTruthTrackFinder.OutputLevel = DEBUG
+MyTruthTrackFinder.ProcessorType = "TruthTrackFinder"
+MyTruthTrackFinder.Parameters = {
+    "FitForward": ["true"],
+    "MCParticleCollectionName": ["MCParticle"],
+    "SiTrackCollectionName": ["SiTracks"],
+    "SiTrackRelationCollectionName": ["SiTrackRelations"],
+    "SimTrackerHitRelCollectionNames": [
+        "VXDTrackerHitRelations",
+        "InnerTrackerBarrelHitsRelations",
+        "OuterTrackerBarrelHitsRelations",
+        "VXDEndcapTrackerHitRelations",
+        "InnerTrackerEndcapHitsRelations",
+        "OuterTrackerEndcapHitsRelations",
+    ],
+    "TrackerHitCollectionNames": [
+        "VXDTrackerHits",
+        "ITrackerHits",
+        "OTrackerHits",
+        "VXDEndcapTrackerHits",
+        "ITrackerEndcapHits",
+        "OTrackerEndcapHits",
+    ],
+    "UseTruthInPrefit": ["false"],
+}
+
 MyClupatraProcessor = MarlinProcessorWrapper("MyClupatraProcessor")
 MyClupatraProcessor.OutputLevel = INFO
 MyClupatraProcessor.ProcessorType = "ClupatraProcessor"
@@ -84,6 +111,24 @@ MyConformalTracking.Parameters = {
     ],
     "trackPurity": ["0.7"],
     # "Verbosity": ["DEBUG"],
+}
+
+# copied from https://github.com/gaswk/CLDConfig/blob/main/CLDConfig/CLDReconstruction.py
+ClonesAndSplitTracksFinder = MarlinProcessorWrapper("ClonesAndSplitTracksFinder")
+ClonesAndSplitTracksFinder.OutputLevel = DEBUG
+ClonesAndSplitTracksFinder.ProcessorType = "ClonesAndSplitTracksFinder"
+ClonesAndSplitTracksFinder.Parameters = {
+    "EnergyLossOn": ["true"],
+    "InputTrackCollectionName": ["SiTracksCT"],
+    "MultipleScatteringOn": ["true"],
+    "OutputTrackCollectionName": ["SiTracks"],
+    "SmoothOn": ["false"],
+    "extrapolateForward": ["true"],
+    "maxSignificancePhi": ["3"],
+    "maxSignificancePt": ["2"],
+    "maxSignificanceTheta": ["3"],
+    "mergeSplitTracks": ["false"],
+    "minTrackPt": ["1"],
 }
 
 
