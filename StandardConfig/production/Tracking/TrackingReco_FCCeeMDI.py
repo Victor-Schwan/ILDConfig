@@ -4,31 +4,36 @@ from Configurables import MarlinProcessorWrapper
 from Gaudi.Configuration import DEBUG, INFO
 
 CT_MAX_DIST = "0.03;"  # semi-colon is important! RANDOM VALUE COPYIED FROM CLDRECO
+MCPartColName = ["MCParticle"]  # MCParticleCollectionName
 
-MyTruthTrackFinder = MarlinProcessorWrapper("MyTruthTrackFinder")
-MyTruthTrackFinder.OutputLevel = DEBUG
-MyTruthTrackFinder.ProcessorType = "TruthTrackFinder"
-MyTruthTrackFinder.Parameters = {
-    "FitForward": ["true"],
-    "MCParticleCollectionName": ["MCParticle"],
-    "SiTrackCollectionName": ["SiTracksTrue"],
-    "SiTrackRelationCollectionName": ["SiTrackRelations"],
-    "SimTrackerHitRelCollectionNames": [
-        "VertexBarrelTrackerHitRelations ",
-        "InnerTrackerBarrelHitRelations",
-        "SETTrackerHitRelations",
-        "VertexEndcapTrackerHitRelations",
-        "InnerTrackerEndcapHitRelations",
-    ],
-    "TrackerHitCollectionNames": [
-        "VertexBarrelTrackerHits",
-        "InnerTrackerBarrelHits",
-        "SETTrackerHits",
-        "VertexEndcapTrackerHits",
-        "InnerTrackerEndcapHits",
-    ],
-    "UseTruthInPrefit": ["false"],
-}
+###################################################################
+# Either TruthTrackFinder can run or ConformalTracking and ClonesAndSplitTracksFinder see CLDReco
+###################################################################
+#
+# MyTruthTrackFinder = MarlinProcessorWrapper("MyTruthTrackFinder")
+# MyTruthTrackFinder.OutputLevel = DEBUG
+# MyTruthTrackFinder.ProcessorType = "TruthTrackFinder"
+# MyTruthTrackFinder.Parameters = {
+#     "FitForward": ["true"],
+#     "MCParticleCollectionName": MCPartColName,
+#     "SiTrackCollectionName": ["SiTracks"],
+#     "SiTrackRelationCollectionName": ["SiTrackRelations"],
+#     "SimTrackerHitRelCollectionNames": [
+#         "VertexBarrelTrackerHitRelations ",
+#         "InnerTrackerBarrelHitRelations",
+#         "SETTrackerHitRelations",
+#         "VertexEndcapTrackerHitRelations",
+#         "InnerTrackerEndcapHitRelations",
+#     ],
+#     "TrackerHitCollectionNames": [
+#         "VertexBarrelTrackerHits",
+#         "InnerTrackerBarrelHits",
+#         "SETTrackerHits",
+#         "VertexEndcapTrackerHits",
+#         "InnerTrackerEndcapHits",
+#     ],
+#     "UseTruthInPrefit": ["false"],
+# }
 
 MyClupatraProcessor = MarlinProcessorWrapper("MyClupatraProcessor")
 MyClupatraProcessor.OutputLevel = INFO
@@ -68,7 +73,7 @@ MyConformalTracking.Parameters = {
     "DebugHits": ["DebugHits"],
     "DebugPlots": ["false"],
     "DebugTiming": ["false"],
-    "MCParticleCollectionName": ["MCParticle"],
+    "MCParticleCollectionName": MCPartColName,
     "MaxHitInvertedFit": ["0"],
     "MinClustersOnTrackAfterFit": ["3"],
     "RelationsNames": [
@@ -108,12 +113,11 @@ MyConformalTracking.Parameters = {
         "InnerTrackerEndcapHits",
     ],
     "trackPurity": ["0.7"],
-    # "Verbosity": ["DEBUG"],
 }
 
 # copied from https://github.com/gaswk/CLDConfig/blob/main/CLDConfig/CLDReconstruction.py
 MyClonesAndSplitTracksFinder = MarlinProcessorWrapper("MyClonesAndSplitTracksFinder")
-MyClonesAndSplitTracksFinder.OutputLevel = DEBUG
+MyClonesAndSplitTracksFinder.OutputLevel = INFO
 MyClonesAndSplitTracksFinder.ProcessorType = "ClonesAndSplitTracksFinder"
 MyClonesAndSplitTracksFinder.Parameters = {
     "EnergyLossOn": ["true"],
@@ -129,10 +133,94 @@ MyClonesAndSplitTracksFinder.Parameters = {
     "minTrackPt": ["1"],
 }
 
+MyRefit = MarlinProcessorWrapper("MyRefit")
+MyRefit.OutputLevel = INFO
+MyRefit.ProcessorType = "RefitFinal"
+MyRefit.Parameters = {
+    "EnergyLossOn": ["true"],
+    "InputRelationCollectionName": ["SiTrackRelations"],
+    "InputTrackCollectionName": ["SiTracks"],
+    "Max_Chi2_Incr": ["1.79769e+30"],
+    "MinClustersOnTrackAfterFit": ["3"],
+    "MultipleScatteringOn": ["true"],
+    "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
+    "OutputTrackCollectionName": ["SiTracks_Refitted"],
+    "ReferencePoint": ["-1"],
+    "SmoothOn": ["false"],
+    "extrapolateForward": ["true"],
+}
+
+MyRecoMCTruthLinker = MarlinProcessorWrapper("MyRecoMCTruthLinker")
+MyRecoMCTruthLinker.OutputLevel = DEBUG
+MyRecoMCTruthLinker.ProcessorType = "RecoMCTruthLinker"
+MyRecoMCTruthLinker.Parameters = {
+    "BremsstrahlungEnergyCut": ["1"],
+    "CalohitMCTruthLinkName": ["CalohitMCTruthLink"],
+    "ClusterCollection": ["PandoraClusters"],
+    "ClusterMCTruthLinkName": ["ClusterMCTruthLink"],
+    "FullRecoRelation": ["true"],
+    "InvertedNonDestructiveInteractionLogic": ["false"],
+    "KeepDaughtersPDG": ["22", "111", "310", "13", "211", "321", "3120"],
+    "MCParticleCollection": MCPartColName,
+    "MCParticlesSkimmedName": ["MCParticlesSkimmed"],
+    "MCTruthClusterLinkName": ["MCTruthClusterLink"],
+    "MCTruthRecoLinkName": ["MCTruthRecoLink"],
+    "MCTruthTrackLinkName": ["MCTruthSiTracksLink"],
+    "RecoMCTruthLinkName": ["RecoMCTruthLink"],
+    "RecoParticleCollection": ["PandoraPFOs"],
+    "SaveBremsstrahlungPhotons": ["true"],
+    "SimCaloHitCollections": [
+        "ECalBarrelCollection",
+        "ECalEndcapCollection",
+        "HCalBarrelCollection",
+        "HCalEndcapCollection",
+        "HCalRingCollection",
+        "YokeBarrelCollection",
+        "YokeEndcapCollection",
+        "LumiCalCollection",
+    ],
+    "SimCalorimeterHitRelationNames": ["RelationCaloHit", "RelationMuonHit"],
+    "SimTrackerHitCollections": [
+        "VertexBarrelCollection",
+        "VertexEndcapCollection",
+        "InnerTrackerBarrelCollection",
+        "InnerTrackerEndcapCollection",
+        "OuterTrackerEndcapCollection",
+    ],
+    "TrackCollection": ["SiTracks_Refitted"],
+    "TrackMCTruthLinkName": ["SiTracksMCTruthLink"],
+    "TrackerHitsRelInputCollections": [
+        "VXDTrackerHitRelations",
+        "VXDEndcapTrackerHitRelations",
+        "InnerTrackerBarrelHitsRelations",
+        "OuterTrackerBarrelHitsRelations",
+        "InnerTrackerEndcapHitsRelations",
+        "OuterTrackerEndcapHitsRelations",
+    ],
+    "UseTrackerHitRelations": ["true"],
+    "UsingParticleGun": ["false"],
+    "daughtersECutMeV": ["10"],
+}
+
+
+MyTrackChecker = MarlinProcessorWrapper("MyTrackChecker")
+MyTrackChecker.OutputLevel = DEBUG
+MyTrackChecker.ProcessorType = "TrackChecker"
+MyTrackChecker.Parameters = {
+    "MCParticleCollectionName": MCPartColName,
+    "TrackCollectionName": ["SiTracks_Refitted"],
+    "TrackRelationCollectionName": ["SiTracksMCTruthLink"],
+    "TreeName": ["checktree"],
+    "UseOnlyTree": ["true"],
+}
+
 
 TrackingReco_FCCeeMDISequence = [
-    MyTruthTrackFinder,
+    # MyTruthTrackFinder,
     MyClupatraProcessor,
     MyConformalTracking,
     MyClonesAndSplitTracksFinder,
+    MyRefit,
+    # MyRecoMCTruthLinker,
+    # MyTrackChecker,
 ]
