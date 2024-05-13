@@ -151,7 +151,7 @@ MyRefit.Parameters = {
 }
 
 MyRecoMCTruthLinker = MarlinProcessorWrapper("MyRecoMCTruthLinker")
-MyRecoMCTruthLinker.OutputLevel = DEBUG
+MyRecoMCTruthLinker.OutputLevel = INFO
 MyRecoMCTruthLinker.ProcessorType = "RecoMCTruthLinker"
 MyRecoMCTruthLinker.Parameters = {
     "BremsstrahlungEnergyCut": ["1"],
@@ -170,13 +170,15 @@ MyRecoMCTruthLinker.Parameters = {
     "RecoParticleCollection": ["PandoraPFOs"],
     "SaveBremsstrahlungPhotons": ["true"],
     "SimCaloHitCollections": [
-        "ECalBarrelCollection",
-        "ECalEndcapCollection",
-        "HCalBarrelCollection",
-        "HCalEndcapCollection",
-        "HCalRingCollection",
+        "ECalBarrelSiHitsEven",
+        "ECalBarrelSiHitsOdd",
+        "ECalEndcapSiHitsEven",
+        "ECalEndcapSiHitsOdd",
+        "HcalBarrelRegCollection",
+        "HcalEndcapRingCollection",
+        "HcalEndcapsCollection",
         "YokeBarrelCollection",
-        "YokeEndcapCollection",
+        "YokeEndcapsCollection",
         "LumiCalCollection",
     ],
     "SimCalorimeterHitRelationNames": ["RelationCaloHit", "RelationMuonHit"],
@@ -185,17 +187,18 @@ MyRecoMCTruthLinker.Parameters = {
         "VertexEndcapCollection",
         "InnerTrackerBarrelCollection",
         "InnerTrackerEndcapCollection",
-        "OuterTrackerEndcapCollection",
+        "TPCCollection",
+        "SETCollection",
     ],
     "TrackCollection": ["SiTracks_Refitted"],
     "TrackMCTruthLinkName": ["SiTracksMCTruthLink"],
     "TrackerHitsRelInputCollections": [
-        "VXDTrackerHitRelations",
-        "VXDEndcapTrackerHitRelations",
-        "InnerTrackerBarrelHitsRelations",
-        "OuterTrackerBarrelHitsRelations",
-        "InnerTrackerEndcapHitsRelations",
-        "OuterTrackerEndcapHitsRelations",
+        "VertexBarrelTrackerHitRelations",
+        "VertexEndcapTrackerHitRelations",
+        "InnerTrackerBarrelHitRelations",
+        "InnerTrackerEndcapHitRelations",
+        "TPCTrackerHitRelations",
+        "SETTrackerHitRelations",
     ],
     "UseTrackerHitRelations": ["true"],
     "UsingParticleGun": ["false"],
@@ -204,7 +207,7 @@ MyRecoMCTruthLinker.Parameters = {
 
 
 MyTrackChecker = MarlinProcessorWrapper("MyTrackChecker")
-MyTrackChecker.OutputLevel = DEBUG
+MyTrackChecker.OutputLevel = INFO
 MyTrackChecker.ProcessorType = "TrackChecker"
 MyTrackChecker.Parameters = {
     "MCParticleCollectionName": MCPartColName,
@@ -221,6 +224,6 @@ TrackingReco_FCCeeMDISequence = [
     MyConformalTracking,
     MyClonesAndSplitTracksFinder,
     MyRefit,
-    # MyRecoMCTruthLinker,
-    # MyTrackChecker,
+    MyRecoMCTruthLinker,
+    MyTrackChecker,
 ]

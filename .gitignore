@@ -22,3 +22,6 @@ Ranlux.coonf
 
 # Negate pattern for weirdHit files
 !weirdHits_*
+
+# log files
+StandardConfig/production/log
