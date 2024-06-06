@@ -225,5 +225,5 @@ TrackingReco_FCCeeMDISequence = [
     MyClonesAndSplitTracksFinder,
     MyRefit,
     MyRecoMCTruthLinker,
-    MyTrackChecker,
+    # MyTrackChecker,
 ]
