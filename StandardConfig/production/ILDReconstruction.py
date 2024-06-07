@@ -10,10 +10,10 @@ from Configurables import (
     MarlinProcessorWrapper,
     PodioInput,
     PodioOutput,
-    k4DataSvc,
     TrackingCellIDEncodingSvc,
+    k4DataSvc,
 )
-from Gaudi.Configuration import INFO, DEBUG
+from Gaudi.Configuration import DEBUG, INFO
 
 try:
     from k4FWCore.utils import SequenceLoader, import_from
@@ -230,21 +230,21 @@ if reco_args.runOverlay:
 ecal_technology = CONSTANTS["EcalTechnology"]
 hcal_technology = CONSTANTS["HcalTechnology"]
 
-FCCeeMDI_reco = False
+FCCeeMDI_RECO = False
 if reco_args.compactFile:
     while True:
-        FCCeeMDI_reco = input("Execute Reco tailored to FCCeeMDI? True / False: ")
+        FCCeeMDI_RECO = input("Execute Reco tailored to FCCeeMDI? True / False: ")
 
-        if FCCeeMDI_reco.capitalize() == "True":
+        if FCCeeMDI_RECO.capitalize() == "True":
             break
-        if FCCeeMDI_reco.capitalize() == "False":
+        if FCCeeMDI_RECO.capitalize() == "False":
             break
         print("Enter True or False")
         continue
 
-    FCCeeMDI_reco = bool(FCCeeMDI_reco)
+    FCCeeMDI_RECO = bool(FCCeeMDI_RECO)
 
-if det_model in FCCeeMDI_DETECTOR_MODELS or FCCeeMDI_reco:
+if det_model in FCCeeMDI_DETECTOR_MODELS or FCCeeMDI_RECO:
     sequenceLoader.load("Tracking/TrackingDigi_FCCeeMDI")
     sequenceLoader.load("Tracking/TrackingReco_FCCeeMDI")
 else:
@@ -378,5 +378,5 @@ if reco_args.lcioOutput in ("on", "only"):
     algList.append(DSTOutput)
 
 ApplicationMgr(
-    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=INFO
+    TopAlg=algList, EvtSel="NONE", EvtMax=3, ExtSvc=svcList, OutputLevel=DEBUG
 )
