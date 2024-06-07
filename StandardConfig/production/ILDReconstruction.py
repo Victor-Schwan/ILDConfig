@@ -11,10 +11,10 @@ from Configurables import (
     MarlinProcessorWrapper,
     PodioInput,
     PodioOutput,
-    k4DataSvc,
     TrackingCellIDEncodingSvc,
+    k4DataSvc,
 )
-from Gaudi.Configuration import INFO, DEBUG
+from Gaudi.Configuration import DEBUG, INFO
 
 try:
     from k4FWCore.utils import SequenceLoader, import_from
@@ -238,7 +238,6 @@ if reco_args.runOverlay:
 ecal_technology = CONSTANTS["EcalTechnology"]
 hcal_technology = CONSTANTS["HcalTechnology"]
 
-<<<<<<< HEAD
 # identify specified detector model
 if reco_args.compactFile:
     det_model = Path(reco_args.compactFile).stem
@@ -246,23 +245,6 @@ else:
     det_model = reco_args.detectorModel
 # load relevant tracking
 if det_model in FCCeeMDI_DETECTOR_MODELS:
-=======
-FCCeeMDI_reco = False
-if reco_args.compactFile:
-    while True:
-        FCCeeMDI_reco = input("Execute Reco tailored to FCCeeMDI? True / False: ")
-
-        if FCCeeMDI_reco.capitalize() == "True":
-            break
-        if FCCeeMDI_reco.capitalize() == "False":
-            break
-        print("Enter True or False")
-        continue
-
-    FCCeeMDI_reco = bool(FCCeeMDI_reco)
-
-if det_model in FCCeeMDI_DETECTOR_MODELS or FCCeeMDI_reco:
->>>>>>> 2c130e2 (ILDReco local k4geo_DIR, query if FCC Reco if compact file provided; ConformalTracking: minimal working example)
     sequenceLoader.load("Tracking/TrackingDigi_FCCeeMDI")
     sequenceLoader.load("Tracking/TrackingReco_FCCeeMDI")
 elif det_model in DETECTOR_MODELS:
