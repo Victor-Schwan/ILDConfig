@@ -67,7 +67,8 @@ if [[ -z ${DetVer_LookUp1[$DetVer]} ]] || [[ -z ${DetVer_LookUp2[$DetVer]} ]]; t
 fi
 
 # Build the ddsim command
-ddsim_cmd="ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py"
+ddsim_cmd="ddsim --outputFile $SIM_file_name --compactFile $k4geo_DIR${DetVer_LookUp1[$DetVer]} --steeringFile TPC_debug_muon_steer.py"
+# ddsim_cmd="ddsim --inputFiles Examples/bbudsc_3evt/bbudsc_3evt.stdhep --outputFile $SIM_file_name --compactFile $k4geo_DIR/${DetVer_LookUp1[$DetVer]} --steeringFile ddsim_steer.py"
 if [[ $LOG_MODE -eq 1 ]]; then
     ddsim_cmd+=" > "${LOG_FILE_BASE}_ddsim.log" 2>&1"  # Redirect output to log file
 elif [[ $VERBOSE -eq 0 ]]; then
@@ -84,7 +85,7 @@ if [[ $DRY_MODE -eq 0 ]]; then
     fi
 fi
 
-k4run_cmd="k4run ILDReconstruction.py --inputFiles=$SIM_file_name --lcioOutput off --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
+k4run_cmd="k4run ILDReconstruction.py -n -1 --inputFiles=$SIM_file_name --lcioOutput on --detectorModel=${DetVer_LookUp2[$DetVer]} --outputFileBase=${DataDir}${Name}_${DetVer} --noBeamCalReco --trackingOnly"
 if [[ $LOG_MODE -eq 1 ]]; then
     k4run_cmd+=" > "${LOG_FILE_BASE}_k4run.log" 2>&1"  # Redirect output to log file
 elif [[ $VERBOSE -eq 0 ]]; then
