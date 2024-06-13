@@ -4,14 +4,15 @@ import sys
 from os import environ, fspath
 from pathlib import Path
 
-from rich.console import Console
+# from rich.console import Console
 
-console = Console()
+# console = Console()
 
 
 def print_color(message: str):
     prefix = "[ sim_and_k4run ]:"
-    console.print(f"{prefix} {message}", style="bold yellow")
+    # console.print(f"{prefix} {message}", style="bold yellow")
+    print(f"{prefix} {message}")
 
 
 def validate_args(args):
