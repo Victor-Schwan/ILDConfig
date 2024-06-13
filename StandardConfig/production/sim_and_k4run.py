@@ -1,12 +1,21 @@
 import argparse
 import subprocess
 import sys
+from dataclasses import dataclass
 from os import environ, fspath
 from pathlib import Path
 
 # from rich.console import Console
 
 # console = Console()
+
+
+# Define the dataclass
+@dataclass
+class DetectorVersion:
+    short_name: str
+    tech_name: str
+    compact_file_path: Path
 
 
 def print_color(message: str):
@@ -16,10 +25,7 @@ def print_color(message: str):
 
 
 def validate_args(args):
-    if (
-        args.detector_version not in detver_lookup1
-        or args.detector_version not in detver_lookup2
-    ):
+    if args.detector_version not in detector_versions:
         raise ValueError(f"Invalid detector version: {args.detector_version}")
 
 
@@ -31,7 +37,7 @@ def set_environment():
 def build_ddsim_command(args, sim_file, log_file_base):
     base_cmd = (
         f"ddsim --outputFile {sim_file} "
-        f"--compactFile {environ['k4geo_DIR']}{detver_lookup1[args.detector_version]} "
+        f"--compactFile {environ['k4geo_DIR'] / detector_versions[args.detector_version].compact_file_path} "
         "--steeringFile TPC_debug_muon_steer.py"
     )
 
@@ -45,7 +51,7 @@ def build_ddsim_command(args, sim_file, log_file_base):
 def build_k4run_command(args, sim_file, output_file_base, log_file_base):
     base_cmd = (
         f"k4run ILDReconstruction.py -n -1 --inputFiles={sim_file} --lcioOutput on "
-        f"--detectorModel={detver_lookup2[args.detector_version]} "
+        f"--detectorModel={detector_versions[args.detector_version].tech_name} "
         f"--outputFileBase={output_file_base} "
         "--noBeamCalReco --trackingOnly"
     )
@@ -128,13 +134,23 @@ def main():
         sys.exit(e.returncode)
 
 
-detver_lookup1 = {
-    "v02": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml",
-    "v09": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml",
-    "v11": "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml",
+detector_versions = {
+    "v02": DetectorVersion(
+        short_name="v02",
+        tech_name="ILD_l5_o1_v02",
+        compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml"),
+    ),
+    "v09": DetectorVersion(
+        short_name="v09",
+        tech_name="ILD_l5_o1_v09",
+        compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml"),
+    ),
+    "v11": DetectorVersion(
+        short_name="v11",
+        tech_name="ILD_l5_v11",
+        compact_file_path=Path("ILD/compact/ILD_l5_v11/ILD_l5_v11.xml"),
+    ),
 }
-
-detver_lookup2 = {"v02": "ILD_l5_o1_v02", "v09": "ILD_l5_o1_v09", "v11": "ILD_l5_v11"}
 
 if __name__ == "__main__":
     main()
