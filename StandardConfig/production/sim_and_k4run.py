@@ -1,27 +1,76 @@
 import argparse
-import os
 import subprocess
 import sys
+from os import environ, fspath
 from pathlib import Path
+
+from rich.console import Console
+
+console = Console()
 
 
 def print_color(message: str):
-    YELLOW = "\033[1;33m"
-    NC = "\033[0m"
-    PREFIX = "[ sim_and_k4run ]:"
-    print(f"\n{YELLOW}{PREFIX}{NC} {message}\n")
+    prefix = "[ sim_and_k4run ]:"
+    console.print(f"{prefix} {message}", style="bold yellow")
 
 
-def main():
+def validate_args(args):
+    if (
+        args.detector_version not in detver_lookup1
+        or args.detector_version not in detver_lookup2
+    ):
+        raise ValueError(f"Invalid detector version: {args.detector_version}")
+
+
+def set_environment():
+    environ["k4geo_dir"] = fspath(Path.home() / "promotion/code/k4geo/")
+    print_color("Switched to local k4geo")
+
+
+def build_ddsim_command(args, sim_file, log_file_base):
+    base_cmd = (
+        f"ddsim --outputFile {sim_file} "
+        f"--compactFile {environ['k4geo_dir']}{detver_lookup1[args.detector_version]} "
+        "--steeringFile TPC_debug_muon_steer.py"
+    )
+
+    if args.logmode:
+        return f"{base_cmd} > {log_file_base}_ddsim.log 2>&1"
+    if not args.verbose:
+        return f"{base_cmd} &> /dev/null"
+    return base_cmd
+
+
+def build_k4run_command(args, sim_file, output_file_base, log_file_base):
+    base_cmd = (
+        f"k4run ILDReconstruction.py -n -1 --inputFiles={sim_file} --lcioOutput on "
+        f"--detectorModel={detver_lookup2[args.detector_version]} "
+        f"--outputFileBase={output_file_base} "
+        "--noBeamCalReco --trackingOnly"
+    )
+
+    if args.logmode:
+        return f"{base_cmd} > {log_file_base}_k4run.log 2>&1"
+    if not args.verbose:
+        return f"{base_cmd} &> /dev/null"
+    return base_cmd
+
+
+def execute_command(cmd):
+    print_color(f"Executing command: {cmd}")
+    subprocess.run(cmd, shell=True, check=True)
+
+
+def parse_arguments():
     parser = argparse.ArgumentParser(description="Simulate and run k4 simulation.")
-    parser.add_argument("Name", type=str, help="Name of the trial run")
-    parser.add_argument("DetectorVersion", type=str, help="Version of the detector")
+    parser.add_argument("name", type=str, help="Name of the trial run")
+    parser.add_argument("detector_version", type=str, help="Version of the detector")
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable verbose mode"
     )
     parser.add_argument(
         "-d",
-        "--dry-run",
+        "--dry_run",
         action="store_true",
         help="Perform a dry run without executing commands",
     )
@@ -31,75 +80,54 @@ def main():
         action="store_true",
         help="Enable log mode to redirect output to log files",
     )
+    return parser.parse_args()
 
-    args = parser.parse_args()
 
-    DataDir = Path("data/")
-    LogDir = Path("log/")
+def main():
+    try:
+        args = parse_arguments()
+        validate_args(args)
 
-    Name = args.Name
-    DetVer = args.DetectorVersion
-    VERBOSE = args.verbose
-    DRY_MODE = args.dry_run
-    LOG_MODE = args.logmode
+        data_dir = Path("data/")
+        log_dir = Path("log/")
+        sim_output_file_path = (
+            data_dir / f"{args.name}_{args.detector_version}_SIM.edm4hep.root"
+        )
+        rec_output_file_base = data_dir / f"{args.name}_{args.detector_version}"
+        log_file_base = log_dir / f"{args.name}_{args.detector_version}"
 
-    SIM_file_name = DataDir / f"{Name}_{DetVer}_SIM.edm4hep.root"
-    LOG_FILE_BASE = LogDir / f"{Name}_{DetVer}"
+        set_environment()
+        print_color(f"Output will be written to: {sim_output_file_path}")
 
-    print_color(f"Switched to local k4geo")
-    os.environ["k4geo_DIR"] = str(Path(os.environ["HOME"]) / "promotion/code/k4geo/")
+        ddsim_cmd = build_ddsim_command(args, sim_output_file_path, log_file_base)
+        if not args.dry_run:
+            execute_command(ddsim_cmd)
 
-    print_color(f"Output will be written to: {SIM_file_name}")
+        k4run_cmd = build_k4run_command(
+            args, sim_output_file_path, rec_output_file_base, log_file_base
+        )
+        if not args.dry_run:
+            execute_command(k4run_cmd)
 
-    DetVer_LookUp1 = {
-        "v02": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml",
-        "v09": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml",
-        "v11": "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml",
-    }
-
-    DetVer_LookUp2 = {
-        "v02": "ILD_l5_o1_v02",
-        "v09": "ILD_l5_o1_v09",
-        "v11": "ILD_l5_v11",
-    }
-
-    if DetVer not in DetVer_LookUp1 or DetVer not in DetVer_LookUp2:
-        print_color(f"Invalid detector version: {DetVer}")
+        if args.dry_run:
+            print_color("Dry mode activated: Commands printed but not executed")
+        else:
+            print_color("Both commands executed successfully")
+    except ValueError as e:
+        print_color(str(e))
         sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        print_color(f"Command failed: {e}")
+        sys.exit(e.returncode)
 
-    ddsim_cmd = f"ddsim --outputFile {SIM_file_name} --compactFile {os.environ['k4geo_DIR']}{DetVer_LookUp1[DetVer]} --steeringFile TPC_debug_muon_steer.py"
-    if LOG_MODE:
-        ddsim_cmd += f" > {LOG_FILE_BASE}_ddsim.log 2>&1"
-    elif not VERBOSE:
-        ddsim_cmd += " &> /dev/null"
 
-    print_color(f"Executing command: {ddsim_cmd}")
+detver_lookup1 = {
+    "v02": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml",
+    "v09": "ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml",
+    "v11": "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml",
+}
 
-    if not DRY_MODE:
-        result = subprocess.run(ddsim_cmd, shell=True)
-        if result.returncode != 0:
-            print_color(f"ddsim command failed with exit code {result.returncode}")
-            sys.exit(result.returncode)
-
-    k4run_cmd = f"k4run ILDReconstruction.py -n -1 --inputFiles={SIM_file_name} --lcioOutput on --detectorModel={DetVer_LookUp2[DetVer]} --outputFileBase={DataDir / f'{Name}_{DetVer}'} --noBeamCalReco --trackingOnly"
-    if LOG_MODE:
-        k4run_cmd += f" > {LOG_FILE_BASE}_k4run.log 2>&1"
-    elif not VERBOSE:
-        k4run_cmd += " &> /dev/null"
-
-    print_color(f"Executing command: {k4run_cmd}")
-
-    if not DRY_MODE:
-        result = subprocess.run(k4run_cmd, shell=True)
-        if result.returncode != 0:
-            print_color(f"k4run command failed with exit code {result.returncode}")
-            sys.exit(result.returncode)
-
-    if DRY_MODE:
-        print_color("Dry mode activated: Commands printed but not executed")
-    else:
-        print_color("Both commands executed successfully")
-
+detver_lookup2 = {"v02": "ILD_l5_o1_v02", "v09": "ILD_l5_o1_v09", "v11": "ILD_l5_v11"}
 
 if __name__ == "__main__":
     main()
