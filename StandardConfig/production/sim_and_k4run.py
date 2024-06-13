@@ -57,9 +57,10 @@ def build_k4run_command(args, sim_file, output_file_base, log_file_base):
     return base_cmd
 
 
-def execute_command(cmd):
-    print_color(f"Executing command: {cmd}")
+def execute_command(cmd, cmd_nickname):
+    print_color(f"Executing command: {cmd_nickname}")
     subprocess.run(cmd, shell=True, check=True)
+    print_color(f"Finished command: {cmd_nickname}")
 
 
 def parse_arguments():
@@ -89,6 +90,7 @@ def main():
         args = parse_arguments()
         validate_args(args)
 
+        # create Paths
         data_dir = Path("data/")
         log_dir = Path("log/")
         sim_output_file_path = (
@@ -98,22 +100,26 @@ def main():
         log_file_base = log_dir / f"{args.name}_{args.detector_version}"
 
         set_environment()
-        print_color(f"Output will be written to: {sim_output_file_path}")
 
         ddsim_cmd = build_ddsim_command(args, sim_output_file_path, log_file_base)
-        if not args.dry_run:
-            execute_command(ddsim_cmd)
 
         k4run_cmd = build_k4run_command(
             args, sim_output_file_path, rec_output_file_base, log_file_base
         )
-        if not args.dry_run:
-            execute_command(k4run_cmd)
+
+        print_color(f"Simulation output will be written to: {sim_output_file_path}")
 
         if args.dry_run:
             print_color("Dry mode activated: Commands printed but not executed")
+            print_color(f"ddsim cmd: {ddsim_cmd}")
+            print_color(f"k4run cmd: {k4run_cmd}")
+
         else:
-            print_color("Both commands executed successfully")
+            execute_command(ddsim_cmd, "ddsim")
+            execute_command(k4run_cmd, "k4run")
+
+        print_color("Both commands executed successfully")
+
     except ValueError as e:
         print_color(str(e))
         sys.exit(1)
