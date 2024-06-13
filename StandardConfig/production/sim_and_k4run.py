@@ -24,14 +24,14 @@ def validate_args(args):
 
 
 def set_environment():
-    environ["k4geo_dir"] = fspath(Path.home() / "promotion/code/k4geo/")
+    environ["k4geo_DIR"] = fspath(Path.home() / "promotion/code/k4geo/")
     print_color("Switched to local k4geo")
 
 
 def build_ddsim_command(args, sim_file, log_file_base):
     base_cmd = (
         f"ddsim --outputFile {sim_file} "
-        f"--compactFile {environ['k4geo_dir']}{detver_lookup1[args.detector_version]} "
+        f"--compactFile {environ['k4geo_DIR']}{detver_lookup1[args.detector_version]} "
         "--steeringFile TPC_debug_muon_steer.py"
     )
 
