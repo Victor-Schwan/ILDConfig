@@ -20,7 +20,7 @@ class DetectorVersion:
 
 def print_color(message: str):
     prefix = "[ sim_and_k4run ]:"
-    console.print(f"{prefix} {message}", style="bold yellow")
+    console.print(f"[bold yellow]{prefix}[/bold yellow] {message}")
 
 
 def validate_args(args):
@@ -129,9 +129,10 @@ def main():
         print_color(f"Simulation output will be written to: {sim_output_file_path}")
 
         if args.dry_run:
+            cmd_color = "cyan"
             print_color("Dry mode activated: Commands printed but not executed")
-            print_color(f"ddsim cmd: {ddsim_cmd}")
-            print_color(f"k4run cmd: {k4run_cmd}")
+            print_color(f"[{cmd_color}]ddsim cmd:[/{cmd_color}] {ddsim_cmd}")
+            print_color(f"[{cmd_color}]k4run cmd:[/{cmd_color}] {k4run_cmd}")
 
         else:
             execute_command(ddsim_cmd, "ddsim")
