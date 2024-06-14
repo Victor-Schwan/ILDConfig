@@ -137,8 +137,7 @@ def main():
         else:
             execute_command(ddsim_cmd, "ddsim")
             execute_command(k4run_cmd, "k4run")
-
-        print_color("Both commands executed successfully")
+            print_color("Both commands executed successfully")
 
     except ValueError as e:
         print_color(str(e))
