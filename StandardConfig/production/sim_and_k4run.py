@@ -99,6 +99,9 @@ def main():
         # create Paths
         data_dir = Path("data/")
         log_dir = Path("log/")
+        assert data_dir.exists(), f"The data directory '{data_dir}' does not exist."
+        assert log_dir.exists(), f"The log directory '{log_dir}' does not exist."
+
         sim_output_file_path = (
             data_dir / f"{args.name}_{args.detector_version}_SIM.edm4hep.root"
         )
