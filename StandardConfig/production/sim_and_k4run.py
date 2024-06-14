@@ -34,33 +34,44 @@ def set_environment():
     print_color("Switched to local k4geo")
 
 
-def build_ddsim_command(args, sim_file, log_file_base):
-    base_cmd = (
-        f"ddsim --outputFile {sim_file} "
-        f"--compactFile {environ['k4geo_DIR'] / detector_versions[args.detector_version].compact_file_path} "
-        "--steeringFile TPC_debug_muon_steer.py"
-    )
-
-    if args.logmode:
-        return f"{base_cmd} > {log_file_base}_ddsim.log 2>&1"
+def log_mode_handler(args, base_cmd, log_file_base):
+    if args.log_mode:
+        base_cmd.append(f"> {log_file_base}.log 2>&1")
+        return " ".join(base_cmd)
     if not args.verbose:
-        return f"{base_cmd} &> /dev/null"
-    return base_cmd
+        base_cmd.append("&> /dev/null")
+        return " ".join(base_cmd)
+    return " ".join(base_cmd)
+
+
+def build_ddsim_command(args, sim_file, log_file_base):
+    base_cmd = [
+        "ddsim",
+        f"--outputFile {sim_file}",
+        f"--compactFile {environ['k4geo_DIR'] / detector_versions[args.detector_version].compact_file_path}",
+        "--steeringFile TPC_debug_muon_steer.py",
+    ]
+
+    return log_mode_handler(
+        args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_ddsim")
+    )
 
 
 def build_k4run_command(args, sim_file, output_file_base, log_file_base):
-    base_cmd = (
-        f"k4run ILDReconstruction.py -n -1 --inputFiles={sim_file} --lcioOutput on "
-        f"--detectorModel={detector_versions[args.detector_version].tech_name} "
-        f"--outputFileBase={output_file_base} "
-        "--noBeamCalReco --trackingOnly"
-    )
+    base_cmd = [
+        "k4run ILDReconstruction.py",
+        "-n -1",
+        f"--inputFiles={sim_file}",
+        "--lcioOutput on",
+        f"--detectorModel={detector_versions[args.detector_version].tech_name}",
+        f"--outputFileBase={output_file_base}",
+        "--noBeamCalRec",
+        "--trackingOnly",
+    ]
 
-    if args.logmode:
-        return f"{base_cmd} > {log_file_base}_k4run.log 2>&1"
-    if not args.verbose:
-        return f"{base_cmd} &> /dev/null"
-    return base_cmd
+    return log_mode_handler(
+        args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_k4run")
+    )
 
 
 def execute_command(cmd, cmd_nickname):
@@ -84,7 +95,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "-l",
-        "--logmode",
+        "--log_mode",
         action="store_true",
         help="Enable log mode to redirect output to log files",
     )
