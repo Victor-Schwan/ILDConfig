@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from os import environ, fspath
 from pathlib import Path
 
-# from rich.console import Console
+from rich.console import Console
 
-# console = Console()
+console = Console()
 
 
 # Define the dataclass
@@ -20,8 +20,7 @@ class DetectorVersion:
 
 def print_color(message: str):
     prefix = "[ sim_and_k4run ]:"
-    # console.print(f"{prefix} {message}", style="bold yellow")
-    print(f"{prefix} {message}")
+    console.print(f"{prefix} {message}", style="bold yellow")
 
 
 def validate_args(args):
