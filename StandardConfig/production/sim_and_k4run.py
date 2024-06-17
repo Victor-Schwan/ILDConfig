@@ -48,8 +48,17 @@ def build_ddsim_command(args, sim_file, log_file_base):
         "ddsim",
         f"--outputFile {sim_file}",
         f"--compactFile {environ['k4geo_DIR'] / detector_versions[args.detector_version].compact_file_path}",
-        "--steeringFile TPC_debug_muon_steer.py",
     ]
+
+    if args.process_bbudsc:
+        base_cmd.extend(
+            [
+                "--inputFiles Examples/bbudsc_3evt/bbudsc_3evt.stdhep",
+                "--steeringFile ddsim_steer.py",
+            ]
+        )
+    else:
+        base_cmd.append("--steeringFile TPC_debug_muon_steer.py")
 
     return log_mode_handler(
         args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_ddsim")
@@ -97,6 +106,11 @@ def parse_arguments():
         "--log_mode",
         action="store_true",
         help="Enable log mode to redirect output to log files",
+    )
+    parser.add_argument(
+        "--process_bbudsc",
+        action="store_true",
+        help="When given, the 'standard' bbudsc_3evt file is processed.",
     )
     return parser.parse_args()
 
