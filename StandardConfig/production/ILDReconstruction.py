@@ -231,6 +231,7 @@ ecal_technology = CONSTANTS["EcalTechnology"]
 hcal_technology = CONSTANTS["HcalTechnology"]
 
 FCCeeMDI_RECO = False
+# TODO remove following code and replace by better solution from schwan branch
 if reco_args.compactFile:
     while True:
         FCCeeMDI_RECO = input("Execute Reco tailored to FCCeeMDI? True / False: ")
