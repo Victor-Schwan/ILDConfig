@@ -70,7 +70,7 @@ def build_k4run_command(args, sim_file, output_file_base, log_file_base):
         "k4run ILDReconstruction.py",
         "-n -1",
         f"--inputFiles={sim_file}",
-        "--lcioOutput on",
+        f"--lcioOutput {args.lcioOutput}",
         f"--detectorModel={detector_versions[args.detector_version].tech_name}",
         f"--outputFileBase={output_file_base}",
         "--noBeamCalRec",
@@ -111,6 +111,13 @@ def parse_arguments():
         "--process_bbudsc",
         action="store_true",
         help="When given, the 'standard' bbudsc_3evt file is processed.",
+    )
+    parser.add_argument(
+        "--lcioOutput",
+        help="Choose whether to still create LCIO output (off by default)",
+        choices=["off", "on", "only"],
+        default="off",
+        type=str,
     )
     return parser.parse_args()
 
