@@ -2,7 +2,7 @@ import argparse
 import subprocess
 import sys
 from dataclasses import dataclass
-from os import environ, fspath
+from os import environ, fspath, getenv
 from pathlib import Path
 
 from rich.console import Console
@@ -29,8 +29,24 @@ def validate_args(args):
 
 
 def set_environment():
-    environ["k4geo_DIR"] = fspath(Path.home() / "promotion/code/k4geo/")
+    local_k4geo_path = Path.home() / "promotion/code/k4geo/"
+    environ["k4geo_DIR"] = fspath(local_k4geo_path)
+    environ["K4GEO"] = fspath(local_k4geo_path)
     print_color("Switched to local k4geo")
+
+
+def check_k4geo_path():
+    k4geo = getenv("K4GEO") or getenv("k4geo_DIR")
+    if not k4geo:
+        raise KeyError("Set a k4geo environment variable!")
+
+    k4geo_path = Path(k4geo)
+    if k4geo_path.is_relative_to("/cvmfs/"):
+        print_color("k4geo from cvmfs used")
+    elif k4geo_path.is_relative_to(Path.home()):
+        print_color("local k4geo is used")
+    else:
+        print_color("unknown k4geo path used")
 
 
 def log_mode_handler(args, base_cmd, log_file_base):
@@ -123,6 +139,7 @@ def parse_arguments():
 
 
 def main():
+
     try:
         args = parse_arguments()
         validate_args(args)
@@ -140,6 +157,8 @@ def main():
         log_file_base = log_dir / f"{args.name}_{args.detector_version}"
 
         set_environment()
+
+        check_k4geo_path()
 
         ddsim_cmd = build_ddsim_command(args, sim_output_file_path, log_file_base)
 
