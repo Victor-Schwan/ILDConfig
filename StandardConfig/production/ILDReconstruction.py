@@ -98,7 +98,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--runOverlay",
-    help="Run background overaly. NOTE: You have to make sure that the Overlay algorithms in "
+    help="Run background overlay. NOTE: You have to make sure that the Overlay algorithms in "
     " BgOverlay/BgOverlay.py are provided with the necessary overlay files",
     action="store_true",
 )

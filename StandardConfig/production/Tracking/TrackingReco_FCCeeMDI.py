@@ -5,6 +5,8 @@ from Gaudi.Configuration import DEBUG, INFO
 
 CT_MAX_DIST = "0.03;"  # semi-colon is important! RANDOM VALUE COPYIED FROM CLDRECO
 MCPartColName = ["MCParticle"]  # MCParticleCollectionName
+VertexBarrelHitCollectionNames = ["VertexBarrelTrackerHits"]
+VertexEndcapHitCollectionNames = ["VertexEndcapTrackerHits"]
 
 ###################################################################
 # Either TruthTrackFinder can run or ConformalTracking and ClonesAndSplitTracksFinder see CLDReco
@@ -67,7 +69,7 @@ MyClupatraProcessor.Parameters = {
 }
 
 MyConformalTracking = MarlinProcessorWrapper("MyConformalTracking")
-MyConformalTracking.OutputLevel = INFO
+MyConformalTracking.OutputLevel = DEBUG
 MyConformalTracking.ProcessorType = "ConformalTrackingV2"
 MyConformalTracking.Parameters = {
     "DebugHits": ["DebugHits"],
@@ -107,12 +109,14 @@ MyConformalTracking.Parameters = {
     "ThetaRange": ["0.05"],
     "TooManyTracks": ["100000"],
     "TrackerHitCollectionNames": [
-        "VertexBarrelTrackerHits",
-        "VertexEndcapTrackerHits",
         "InnerTrackerBarrelHits",
         "InnerTrackerEndcapHits",
-    ],
+    ]
+    + VertexBarrelHitCollectionNames
+    + VertexEndcapHitCollectionNames,
     "trackPurity": ["0.7"],
+    "VertexBarrelHitCollectionNames": VertexBarrelHitCollectionNames,
+    "VertexEndcapHitCollectionNames": VertexEndcapHitCollectionNames,
 }
 
 # copied from https://github.com/gaswk/CLDConfig/blob/main/CLDConfig/CLDReconstruction.py
@@ -221,6 +225,7 @@ MyFullLDCTracking_MarlinTrk = MarlinProcessorWrapper("MyFullLDCTracking_MarlinTr
 MyFullLDCTracking_MarlinTrk.OutputLevel = INFO
 MyFullLDCTracking_MarlinTrk.ProcessorType = "FullLDCTracking_MarlinTrk"
 MyFullLDCTracking_MarlinTrk.Parameters = {
+    "VertexDetectorName": ["VertexBarrel"],
     "AngleCutForForcedMerging": ["0.05"],
     "AngleCutForMerging": ["0.1"],
     "AssignETDHits": ["0"],
@@ -263,7 +268,7 @@ MyFullLDCTracking_MarlinTrk.Parameters = {
     "RunMarlinTrkDiagnostics": ["false"],
     "SETHitCollection": ["SETSpacePoints"],
     "SETHitToTrackDistance": ["50"],
-    "SITHitCollection": ["SITTrackerHits"],
+    "SITHitCollection": ["InnerTrackerBarrelHits"],
     "SITHitToTrackDistance": ["2"],
     "SiTracks": ["SubsetTracks"],
     "SiTracksMCPRelColl": ["SubsetTracksMCTruthLink"],
@@ -273,7 +278,7 @@ MyFullLDCTracking_MarlinTrk.Parameters = {
     "TPCTracks": ["ClupatraTracks"],
     "TPCTracksMCPRelColl": ["TPCTracksMCTruthLink"],
     "TrackSystemName": ["DDKalTest"],
-    "VTXHitCollection": ["VXDTrackerHits"],
+    "VTXHitCollection": ["VertexBarrelTrackerHits"],
     "VTXHitToTrackDistance": ["1.5"],
     "Z0CutForForcedMerging": ["200"],
     "Z0CutForMerging": ["1000"],
