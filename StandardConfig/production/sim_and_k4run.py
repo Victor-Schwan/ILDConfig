@@ -173,7 +173,7 @@ def main():
         log_file_base = log_dir / f"{args.name}_{args.detector_version}"
         print_color(f"Simulation output will be written to: {sim_output_file_path}")
 
-        set_environment()
+        #set_environment()
 
         check_k4geo_path()
 
