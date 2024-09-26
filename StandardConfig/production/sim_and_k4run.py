@@ -173,7 +173,7 @@ def main():
         log_file_base = log_dir / f"{args.name}_{args.detector_version}"
         print_color(f"Simulation output will be written to: {sim_output_file_path}")
 
-        #set_environment()
+        set_environment()
 
         check_k4geo_path()
 
@@ -221,6 +221,20 @@ detector_versions = {
         short_name="v11",
         tech_name="ILD_l5_v11",
         compact_file_path=Path("ILD/compact/ILD_l5_v11/ILD_l5_v11.xml"),
+    ),
+    "if1": DetectorVersion(
+        short_name="if1",
+        tech_name="ILD_FCCee_v01",
+        compact_file_path=Path(
+            "FCCee/ILD_FCCee/compact/ILD_FCCee_v01/ILD_FCCee_v01.xml"
+        ),
+    ),
+    "if2": DetectorVersion(
+        short_name="if2",
+        tech_name="ILD_FCCee_v02",
+        compact_file_path=Path(
+            "FCCee/ILD_FCCee/compact/ILD_FCCee_v02/ILD_FCCee_v02.xml"
+        ),
     ),
 }
 
