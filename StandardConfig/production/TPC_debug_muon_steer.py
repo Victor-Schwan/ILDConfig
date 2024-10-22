@@ -181,7 +181,7 @@ SIM.gun.direction = (0, 1, 1)
 ##
 ##     Setting a distribution will set isotrop = True
 ##
-SIM.gun.distribution = None
+SIM.gun.distribution = 'uniform' 
 SIM.gun.energy = 10000.0
 
 ##  isotropic distribution for the particle gun
@@ -199,8 +199,8 @@ SIM.gun.phiMin = None
 
 ##  position of the particle gun, 3 vector
 SIM.gun.position = (0.0, 0.0, 0.0)
-SIM.gun.thetaMax = None
-SIM.gun.thetaMin = None
+SIM.gun.thetaMax = 2.5  # acos(-.8)
+SIM.gun.thetaMin = 0.6  # acos(.8)
 
 
 ################################################################################
