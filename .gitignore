@@ -1,5 +1,7 @@
 **/__pycache__/
 
+**/.vscode/**
+
 # Common outputs of the standard workflow
 *.out
 *_SIM.slcio
