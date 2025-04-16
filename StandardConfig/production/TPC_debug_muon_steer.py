@@ -181,7 +181,7 @@ SIM.gun.direction = (0, 1, 1)
 ##
 ##     Setting a distribution will set isotrop = True
 ##
-SIM.gun.distribution = 'uniform' 
+SIM.gun.distribution = "uniform"
 SIM.gun.energy = 10000.0
 
 ##  isotropic distribution for the particle gun
