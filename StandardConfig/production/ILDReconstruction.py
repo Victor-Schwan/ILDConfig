@@ -24,9 +24,9 @@ from k4MarlinWrapper.parseConstants import parseConstants
 sys.path.append(Path(__file__).parent)
 from py_utils import (
     SequenceLoader,
+    get_drop_collections,
     import_from,
     parse_collection_patch_file,
-    get_drop_collections,
 )
 
 # only non-FCCMDI models
