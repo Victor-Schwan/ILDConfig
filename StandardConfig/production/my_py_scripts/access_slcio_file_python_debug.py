@@ -16,7 +16,12 @@ def read_slicio_files(file_names):
                     break
                 print("Reading event", event.getEventNumber())
 
-                from IPython import embed; import time; embed(); time.sleep(1)
+                import time
+
+                from IPython import embed
+
+                embed()
+                time.sleep(1)
                 # Process your event data here
                 # For example, access some particle data:
                 # collection = event.getCollection('MCParticle')
@@ -28,6 +33,7 @@ def read_slicio_files(file_names):
         finally:
             reader.close()
 
+
 if __name__ == "__main__":
-    file_names = ['debugTPC_v02_REC.slcio', 'debugTPC10events_v11_REC.slcio']
+    file_names = ["debugTPC_v02_REC.slcio", "debugTPC10events_v11_REC.slcio"]
     read_slicio_files(file_names)
