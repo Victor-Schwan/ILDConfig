@@ -156,7 +156,6 @@ def parse_arguments():
 
 
 def main():
-
     try:
         args = parse_arguments()
 
