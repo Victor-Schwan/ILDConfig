@@ -12,9 +12,28 @@
 
 *_REC.edm4hep.root
 *_SIM.edm4hep.root
+*.edm4hep.json
 
 # Side product of running Marlin
 MarlinStdRecoParsed.xml
 
 # Output for ranlux
 Ranlux.coonf
+
+# Vim swap files
+*.swp
+
+# Negate pattern for weirdHit files
+!weirdHits_*
+
+# log files
+StandardConfig/production/log
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
