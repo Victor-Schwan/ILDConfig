@@ -1,5 +1,9 @@
 # Running ILD standard simulation and reconstruction
 
+## Victors Fork
+``` source setup.sh ```
+``` ./sim_and_k4run.sh trialRun v11 [v|verbose] [d|dry-run] [l|logmode] ```
+
 (F.Gaede, R.Ete, DESY)
 
 <!---	  
