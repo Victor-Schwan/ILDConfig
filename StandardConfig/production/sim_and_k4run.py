@@ -64,10 +64,10 @@ def log_mode_handler(args, base_cmd, log_file_base):
     return " ".join(base_cmd)
 
 
-def build_ddsim_command(args, sim_file, log_file_base):
+def build_ddsim_command(args, output_sim_file, log_file_base):
     base_cmd = [
         "ddsim",
-        f"--outputFile {sim_file}",
+        f"--outputFile {output_sim_file}",
         f"--compactFile {environ['k4geo_DIR'] / detector_versions[args.detector_version].compact_file_path}",
     ]
 
@@ -86,11 +86,11 @@ def build_ddsim_command(args, sim_file, log_file_base):
     )
 
 
-def build_k4run_command(args, sim_file, output_file_base, log_file_base):
+def build_k4run_command(args, input_sim_file, output_file_base, log_file_base):
     base_cmd = [
         "k4run ILDReconstruction.py",
         "-n -1",
-        f"--inputFiles={sim_file}",
+        f"--inputFiles={input_sim_file}",
         f"--lcioOutput {args.lcioOutput}",
         f"--detectorModel={detector_versions[args.detector_version].tech_name}",
         f"--outputFileBase={output_file_base}",
