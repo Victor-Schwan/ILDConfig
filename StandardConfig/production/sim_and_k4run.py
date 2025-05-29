@@ -24,7 +24,7 @@ def print_color(message: str):
 
 
 def validate_args(args, command_list):
-    if args.detector_version not in detector_versions:
+    if args.detector_version.lower() not in detector_versions:
         raise ValueError(f"Invalid detector version: {args.detector_version}")
     if args.command_index is not None:
         if args.command_index < 0 or args.command_index >= len(command_list):
@@ -205,37 +205,47 @@ def main():
         sys.exit(e.returncode)
 
 
-detector_versions = {
-    "v02": DetectorVersion(
-        short_name="v02",
-        tech_name="ILD_l5_o1_v02",
-        compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml"),
-    ),
-    "v09": DetectorVersion(
-        short_name="v09",
-        tech_name="ILD_l5_o1_v09",
-        compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml"),
-    ),
-    "v11": DetectorVersion(
-        short_name="v11",
-        tech_name="ILD_l5_v11",
-        compact_file_path=Path("ILD/compact/ILD_l5_v11/ILD_l5_v11.xml"),
-    ),
-    "if1": DetectorVersion(
-        short_name="if1",
-        tech_name="ILD_FCCee_v01",
-        compact_file_path=Path(
-            "FCCee/ILD_FCCee/compact/ILD_FCCee_v01/ILD_FCCee_v01.xml"
+class CaseInsensitiveDict(dict):
+    def __getitem__(self, key):
+        return super().__getitem__(key.lower())
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key.lower(), value)
+
+
+detector_versions = CaseInsensitiveDict(
+    {
+        "v02": DetectorVersion(
+            short_name="v02",
+            tech_name="ILD_l5_o1_v02",
+            compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v02.xml"),
         ),
-    ),
-    "if2": DetectorVersion(
-        short_name="if2",
-        tech_name="ILD_FCCee_v02",
-        compact_file_path=Path(
-            "FCCee/ILD_FCCee/compact/ILD_FCCee_v02/ILD_FCCee_v02.xml"
+        "v09": DetectorVersion(
+            short_name="v09",
+            tech_name="ILD_l5_o1_v09",
+            compact_file_path=Path("ILD/compact/ILD_sl5_v02/ILD_l5_o1_v09.xml"),
         ),
-    ),
-}
+        "v11": DetectorVersion(
+            short_name="v11",
+            tech_name="ILD_l5_v11",
+            compact_file_path=Path("ILD/compact/ILD_l5_v11/ILD_l5_v11.xml"),
+        ),
+        "if1": DetectorVersion(
+            short_name="if1",
+            tech_name="ILD_FCCee_v01",
+            compact_file_path=Path(
+                "FCCee/ILD_FCCee/compact/ILD_FCCee_v01/ILD_FCCee_v01.xml"
+            ),
+        ),
+        "if2": DetectorVersion(
+            short_name="if2",
+            tech_name="ILD_FCCee_v02",
+            compact_file_path=Path(
+                "FCCee/ILD_FCCee/compact/ILD_FCCee_v02/ILD_FCCee_v02.xml"
+            ),
+        ),
+    }
+)
 
 if __name__ == "__main__":
     main()
