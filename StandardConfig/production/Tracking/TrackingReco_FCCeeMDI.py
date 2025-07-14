@@ -24,7 +24,7 @@ MyClupatraProcessor.Parameters = {
     "MinimumClusterSize": ["6"],
     "MultipleScatteringOn": ["false", "true"],
     "NumberOfZBins": ["150"],
-    "OutputCollection": ["ClupatraTracks"],
+    "OutputCollection": ["MarlinTrkTracks"],
     "PadRowRange": ["15"],
     "SITHitCollection": ["SITTrackerHits"],
     "SegmentCollectionName": ["ClupatraTrackSegments"],
@@ -395,7 +395,7 @@ MyRefitProcessorProton.Parameters = {
 TrackingReco_FCCeeMDISequence = [
     MyClupatraProcessor,
     MyConformalTracking,
-    MyFullLDCTracking_MarlinTrk,
+    # MyFullLDCTracking_MarlinTrk,
     # MySiliconTracking_MarlinTrk,
     # MyForwardTracking,
     # MyTrackSubsetProcessor,
