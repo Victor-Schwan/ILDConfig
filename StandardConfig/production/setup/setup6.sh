@@ -17,8 +17,8 @@ print_color "set myCodeDir env var"
 export myCodeDir="$HOME/promotion/code"
 
 print_color "set local k4geo"
-export k4geo_DIR="$myCodeDir/k4geo"
-export K4GEO="$k4geo_DIR"
+export k4geo_DIR="$k4gDir"
+export K4GEO="$k4gDir"
 
 print_color "fix PYTHONPATH"
 export PYTHONPATH=$(pwd):$PYTHONPATH
