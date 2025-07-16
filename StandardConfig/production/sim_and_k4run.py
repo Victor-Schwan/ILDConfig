@@ -111,7 +111,7 @@ def process_command(cmd, cmd_nickname, dry_run):
         )
     else:
         print_color(f"Executing command: {cmd_nickname}")
-        subprocess.run(cmd, shell=True, check=True)
+        print_color(subprocess.run(cmd, shell=True, check=True))
         print_color(f"Finished command: {cmd_nickname}")
 
 
