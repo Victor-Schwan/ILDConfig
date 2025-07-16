@@ -28,3 +28,8 @@ source $myCodeDir/ILDConfig/StandardConfig/production/env/bin/activate
 
 print_color "add FCC Plotting Style"
 export PYTHONPATH=$PYTHONPATH:$HOME/promotion/code/
+
+print_color "make tracking repo available"
+cd $trkDir
+k4_local_repo
+cd -
