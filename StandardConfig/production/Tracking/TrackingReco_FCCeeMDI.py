@@ -401,7 +401,7 @@ TrackingReco_FCCeeMDISequence = [
     MyTrackSubsetProcessor,
     MyCompute_dEdxProcessor,
     MyV0Finder,
-    MyKinkFinder,
+    # MyKinkFinder,
     MyRefitProcessorKaon,
     MyRefitProcessorProton,
 ]
