@@ -234,7 +234,7 @@ if not reco_args.trackingOnly:
     if reco_args.runBeamCalReco:
         sequenceLoader.load("HighLevelReco/BeamCalReco")
 
-    sequenceLoader.load("HighLevelReco/HighLevelReco")
+    #sequenceLoader.load("HighLevelReco/HighLevelReco")
 
     MyPfoAnalysis = MarlinProcessorWrapper("MyPfoAnalysis")
     MyPfoAnalysis.ProcessorType = "PfoAnalysis"
