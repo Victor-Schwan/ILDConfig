@@ -12,6 +12,7 @@ VertexEndcapHitCollectionNames = ["VertexEndcapTrackerHits"]
 MyClupatraProcessor = MarlinProcessorWrapper("MyClupatraProcessor")
 MyClupatraProcessor.ProcessorType = "ClupatraProcessor"
 MyClupatraProcessor.Parameters = {
+    "Verbosity":["DEBUG3"],
     "Chi2Cut": ["100"],
     "CreateDebugCollections": ["false", "true"],
     "DistanceCut": ["40"],
@@ -26,7 +27,8 @@ MyClupatraProcessor.Parameters = {
     "NumberOfZBins": ["150"],
     "OutputCollection": ["MarlinTrkTracks"],
     "PadRowRange": ["15"],
-    "SITHitCollection": ["SITTrackerHits"],
+    "SITHitCollection": ["InnerTrackerBarrelHits"],
+    "SITDetectorName": ["InnerTrackerBarrel"],
     "SegmentCollectionName": ["ClupatraTrackSegments"],
     "SmoothOn": ["false"],
     "TPCHitCollection": ["TPCTrackerHits"],
@@ -35,8 +37,9 @@ MyClupatraProcessor.Parameters = {
     "TrackIsCurlerOmega": ["0.001"],
     "TrackStartsInnerDist": ["25"],
     "TrackSystemName": ["DDKalTest"],
-    "VXDHitCollection": ["VXDTrackerHits"],
-    "pickUpSiHits": ["false"],
+    "VXDHitCollection": ["VertexBarrelTrackerHits"],
+    "VXDDetectorName": ["VertexBarrel"],
+    "pickUpSiHits": ["true"],
 }
 
 MyConformalTracking = MarlinProcessorWrapper("MyConformalTracking")
@@ -70,6 +73,34 @@ conformal_tracking_steps_config = {
         "flags": ["HighPTFit", "VertexToTracker"],
         "functions": ["CombineCollections", "ExtendTracks"],
     },
+    "LowerCellAngle1": {
+        "collections": ["VertexBarrelTrackerHits", "VertexEndcapTrackerHits"],
+        "params": {
+            "MaxCellAngle": 0.05,
+            "MaxCellAngleRZ": 0.05,
+            "Chi2Cut": 100,
+            "MinClustersOnTrack": 4,
+            "MaxDistance": CT_MAX_DIST,
+            "SlopeZRange": 10.0,
+            "HighPTCut": 10.0,
+        },
+        "flags": ["HighPTFit", "VertexToTracker", "RadialSearch"],
+        "functions": ["CombineCollections", "BuildNewTracks"],
+    },
+#    "LowerCellAngle2": {
+#        "collections": "",
+#        "params": {
+#            "MaxCellAngle": 0.1,
+#            "MaxCellAngleRZ": 0.1,
+#            "Chi2Cut": 2000,
+#            "MinClustersOnTrack": 4,
+#            "MaxDistance": CT_MAX_DIST,
+#            "SlopeZRange": 10.0,
+#            "HighPTCut": 10.0,
+#        },
+#        "flags": ["HighPTFit", "VertexToTracker", "RadialSearch"],
+#        "functions": ["BuildNewTracks","SortTracks"],
+#    },
     "Tracker": {
         "collections": ["InnerTrackerBarrelHits", "InnerTrackerEndcapHits"],
         "params": {
@@ -398,7 +429,7 @@ TrackingReco_FCCeeMDISequence = [
     # MyFullLDCTracking_MarlinTrk,
     # MySiliconTracking_MarlinTrk,
     # MyForwardTracking,
-    MyTrackSubsetProcessor,
+    # MyTrackSubsetProcessor,
     MyCompute_dEdxProcessor,
     MyV0Finder,
     # MyKinkFinder,
