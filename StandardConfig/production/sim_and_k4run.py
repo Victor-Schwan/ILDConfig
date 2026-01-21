@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from os import environ, fspath, getenv
 from pathlib import Path
 
-from rich.console import Console
-
-console = Console()
+BOLD_YELLOW = "\033[1;33m"
+CYAN = "\033[36m"
+RESET = "\033[0m"
 
 
 # Define the dataclass
@@ -20,7 +20,7 @@ class DetectorVersion:
 
 def print_color(message: str):
     prefix = "[ sim_and_k4run ]:"
-    console.print(f"[bold yellow]{prefix}[/bold yellow] {message}")
+    print(f"{BOLD_YELLOW}{prefix}{RESET} {message}")
 
 
 def validate_args(args, command_list):
@@ -105,9 +105,8 @@ def build_k4run_command(args, input_sim_file, output_file_base, log_file_base):
 
 def process_command(cmd, cmd_nickname, dry_run):
     if dry_run:
-        cmd_color = "cyan"
         print_color(
-            f"Dry mode activated: [{cmd_color}]{cmd_nickname} cmd:[/{cmd_color}] {cmd}"
+            f"Dry mode activated: {CYAN}{cmd_nickname} cmd:{RESET} {cmd}"
         )
     else:
         print_color(f"Executing command: {cmd_nickname}")
