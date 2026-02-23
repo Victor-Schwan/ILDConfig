@@ -1,28 +1,29 @@
 import os
 import sys
 from pathlib import Path
+from typing import Any
 
 from Configurables import (
+    AlgTimingAuditor,
+    AuditorSvc,
+    EventDataSvc,
     GeoSvc,
     MarlinProcessorWrapper,
-    EventDataSvc,
-    AuditorSvc,
-    AlgTimingAuditor,
 )
 from Gaudi.Configuration import INFO
 from k4FWCore import ApplicationMgr, IOSvc
 from k4FWCore.parseArgs import parser
-from k4MarlinWrapper.parseConstants import parseConstants
 from k4MarlinWrapper.io_helpers import IOHandlerHelper
+from k4MarlinWrapper.parseConstants import parseConstants
 
 # Make sure we have the py_utils on the PYHTONPATH (but don't give them any more
 # importance than necessary)
 sys.path.append(Path(__file__).parent)
 from py_utils import (
     SequenceLoader,
+    get_drop_collections,
     import_from,
     parse_collection_patch_file,
-    get_drop_collections,
 )
 
 # only non-FCCMDI models
@@ -88,9 +89,9 @@ parser.add_argument(
 parser.add_argument(
     "--cmsEnergy",
     help="The center-of-mass energy to assume for reconstruction in GeV",
-    choices=(250, 350, 500, 1000),
+    choices=(91, 160, 240, 250, 350, 365, 500, 1000),
     type=int,
-    default=250,
+    default=None,
 )
 parser.add_argument(
     "--detectorModel",
@@ -143,6 +144,20 @@ def get_compact_file_path(detector_model: str):
     return f"{os.path.normpath(os.environ['K4GEO'])}/ILD/compact/{detector_model}/{detector_model}.xml"
 
 
+def get_cms_energy_config(
+    compact_file_path: str | Path | os.PathLike, cms_energy: int | None
+) -> tuple[int, Any]:
+    """returns the cms energy config of the detector model identified by the compact file"""
+    is_FCCee_model = "FCCee" in Path(compact_file_path).parts
+    # choose correct default cms energy if not specified
+    energy = cms_energy or (240 if is_FCCee_model else 250)
+    # choose correct dir for chosen collider
+    collider = "FCCee" if is_FCCee_model else "ILC"
+    return energy, import_from(
+        f"Config/{collider}/Parameters{energy:03d}GeV.cfg"
+    ).PARAMETERS
+
+
 reco_args = parser.parse_known_args()[0]
 
 algList = []
@@ -161,8 +176,9 @@ geoSvc.OutputLevel = INFO
 geoSvc.EnableGeant4Geo = False
 svcList.append(geoSvc)
 
+cms_e, cms_energy_config = get_cms_energy_config(compact_file, reco_args.cmsEnergy)
 CONSTANTS = {
-    "CMSEnergy": str(reco_args.cmsEnergy),
+    "CMSEnergy": str(cms_e),
     "BeamCalCalibrationFactor": str(reco_args.beamCalCalibFactor),
 }
 
@@ -170,11 +186,6 @@ det_calib_constants = import_from(f"Calibration/Calibration_{det_model}.cfg").CO
 CONSTANTS.update(det_calib_constants)
 
 parseConstants(CONSTANTS)
-
-
-cms_energy_config = import_from(
-    f"Config/Parameters{reco_args.cmsEnergy}GeV.cfg"
-).PARAMETERS
 
 sequenceLoader = SequenceLoader(
     algList,
