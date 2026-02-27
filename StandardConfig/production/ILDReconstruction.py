@@ -81,6 +81,20 @@ det_mod_g.add_argument(
     default=None,
 )
 
+beam_cal_reco_g = parser.add_mutually_exclusive_group(required=False)
+beam_cal_reco_g.add_argument(
+    "--runBeamCalReco",
+    help="Run the BeamCal reco",
+    action="store_true",
+    dest="runBeamCalReco",
+)
+beam_cal_reco_g.add_argument(
+    "--noBeamCalReco",
+    help="Don't run the BeamCal reco",
+    action="store_false",
+    dest="runBeamCalReco",
+)
+
 parser.add_argument(
     "--inputFiles",
     action="extend",
@@ -117,18 +131,6 @@ parser.add_argument(
     help="Run background overlay. NOTE: You have to make sure that the Overlay algorithms in "
     " BgOverlay/BgOverlay.py are provided with the necessary overlay files",
     action="store_true",
-)
-parser.add_argument(
-    "--runBeamCalReco",
-    help="Run the BeamCal reco",
-    action="store_true",
-    dest="runBeamCalReco",
-)
-parser.add_argument(
-    "--noBeamCalReco",
-    help="Don't run the BeamCal reco",
-    action="store_false",
-    dest="runBeamCalReco",
 )
 parser.add_argument(
     "--beamCalCalibFactor",
