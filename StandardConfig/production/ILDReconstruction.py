@@ -68,11 +68,14 @@ REC_COLLECTION_CONTENTS_FILE = "collections_rec_level.txt"
 
 det_mod_g = parser.add_mutually_exclusive_group(required=False)
 det_mod_g.add_argument(
-    "--compactFile", help="Compact detector file to use", type=str, default=None
+    "--compactFile",
+    help="Path to a custom DD4hep XML compact file to define the detector geometry",
+    type=str,
+    default=None,
 )
 det_mod_g.add_argument(
     "--detectorModel",
-    help="Which detector model to run reconstruction for",
+    help="Name of a registered detector model to use for reconstruction",
     choices=ALL_DETECTOR_MODELS,
     type=str,
     default=None,
