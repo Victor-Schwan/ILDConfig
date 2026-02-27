@@ -61,6 +61,7 @@ FCCeeMDI_DETECTOR_MODELS = (  # only add models located in $K4GEO/ILD/ here
     "ILD_l5_v11",
     *FCCeeMDI_DETECTOR_MODELS_common_MDI,
 )
+ALL_DETECTOR_MODELS = DETECTOR_MODELS + FCCeeMDI_DETECTOR_MODELS
 
 REC_COLLECTION_CONTENTS_FILE = "collections_rec_level.txt"
 
@@ -169,8 +170,17 @@ evtsvc = EventDataSvc("EventDataSvc")
 svcList.append(evtsvc)
 iosvc = IOSvc()
 
-det_model = reco_args.detectorModel
+det_model = (
+    reco_args.detectorModel
+    if not reco_args.compactFile
+    else Path(reco_args.compactFile).stem
+)
 compact_file = reco_args.compactFile or get_compact_file_path(det_model)
+# Ensure the detector model is registered in the known models list.
+# This is required to correctly resolve paths and select the appropriate reconstruction sequence.
+assert det_model in ALL_DETECTOR_MODELS, (
+    f"Detector model '{det_model}' is not registered in ALL_DETECTOR_MODELS"
+)
 
 geoSvc = GeoSvc("GeoSvc")
 geoSvc.detectors = [compact_file]
@@ -222,11 +232,6 @@ if reco_args.runOverlay:
 ecal_technology = CONSTANTS["EcalTechnology"]
 hcal_technology = CONSTANTS["HcalTechnology"]
 
-# identify specified detector model
-if reco_args.compactFile:
-    det_model = Path(reco_args.compactFile).stem
-else:
-    det_model = reco_args.detectorModel
 # load relevant tracking
 if det_model in FCCeeMDI_DETECTOR_MODELS:
     sequenceLoader.load("Tracking/TrackingDigi_FCCeeMDI")
