@@ -1,0 +1,15 @@
+[tool.pylint]
+disable = ["undefined-variable"]
+
+[tool.pylint.design]
+extension-pkg-allow-list = [
+    "Configurables",
+    "Gaudi",
+    "k4FWCore",
+    "k4MarlinWrapper",
+]
+
+[tool.pyright]
+reportUndefinedVariable = false
+reportMissingImports = false
+
