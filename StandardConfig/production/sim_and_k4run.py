@@ -81,9 +81,7 @@ def build_ddsim_command(args, output_sim_file, log_file_base):
     else:
         base_cmd.append("--steeringFile TPC_debug_muon_steer.py")
 
-    return log_mode_handler(
-        args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_ddsim")
-    )
+    return log_mode_handler(args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_ddsim"))
 
 
 def build_k4run_command(args, input_sim_file, output_file_base, log_file_base):
@@ -98,16 +96,12 @@ def build_k4run_command(args, input_sim_file, output_file_base, log_file_base):
         "--trackingOnly",
     ]
 
-    return log_mode_handler(
-        args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_k4run")
-    )
+    return log_mode_handler(args, base_cmd, log_file_base.with_stem(log_file_base.stem + "_k4run"))
 
 
 def process_command(cmd, cmd_nickname, dry_run):
     if dry_run:
-        print_color(
-            f"Dry mode activated: {CYAN}{cmd_nickname} cmd:{RESET} {cmd}"
-        )
+        print_color(f"Dry mode activated: {CYAN}{cmd_nickname} cmd:{RESET} {cmd}")
     else:
         print_color(f"Executing command: {cmd_nickname}")
         print_color(subprocess.run(cmd, shell=True, check=True))
@@ -118,9 +112,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Simulate and run k4 simulation.")
     parser.add_argument("name", type=str, help="Name of the trial run")
     parser.add_argument("detector_version", type=str, help="Version of the detector")
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable verbose mode"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
     parser.add_argument(
         "-d",
         "--dry_run",
@@ -166,9 +158,7 @@ def main():
         #        assert data_dir.exists(), f"The data directory '{data_dir}' does not exist."
         #        assert log_dir.exists(), f"The log directory '{log_dir}' does not exist."
 
-        sim_output_file_path = (
-            data_dir / f"{args.name}_{args.detector_version}_SIM.edm4hep.root"
-        )
+        sim_output_file_path = data_dir / f"{args.name}_{args.detector_version}_SIM.edm4hep.root"
         rec_output_file_base = data_dir / f"{args.name}_{args.detector_version}"
         log_file_base = log_dir / f"{args.name}_{args.detector_version}"
         print_color(f"Simulation output will be written to: {sim_output_file_path}")
@@ -234,16 +224,12 @@ detector_versions = CaseInsensitiveDict(
         "if1": DetectorVersion(
             short_name="if1",
             tech_name="ILD_FCCee_v01",
-            compact_file_path=Path(
-                "FCCee/ILD_FCCee/compact/ILD_FCCee_v01/ILD_FCCee_v01.xml"
-            ),
+            compact_file_path=Path("FCCee/ILD_FCCee/compact/ILD_FCCee_v01/ILD_FCCee_v01.xml"),
         ),
         "if2": DetectorVersion(
             short_name="if2",
             tech_name="ILD_FCCee_v02",
-            compact_file_path=Path(
-                "FCCee/ILD_FCCee/compact/ILD_FCCee_v02/ILD_FCCee_v02.xml"
-            ),
+            compact_file_path=Path("FCCee/ILD_FCCee/compact/ILD_FCCee_v02/ILD_FCCee_v02.xml"),
         ),
     }
 )

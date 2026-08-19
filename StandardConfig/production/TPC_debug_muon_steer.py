@@ -13,7 +13,9 @@ from g4units import GeV, MeV, m, mm, rad
 SIM = DD4hepSimulation()
 
 ## The compact XML file
-SIM.compactFile = ""  # os.path.join( os.environ.get("k4geo_DIR"), "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml" )
+SIM.compactFile = (
+    ""  # os.path.join( os.environ.get("k4geo_DIR"), "ILD/compact/ILD_l5_v11/ILD_l5_v11.xml" )
+)
 ## Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 7.0e-3 * rad
 SIM.enableDetailedShowerMode = True
@@ -257,9 +259,7 @@ SIM.physics.list = "QGSP_BERT"  # "FTFP_BERT"
 
 ##  location of particle.tbl file containing extra particles and their lifetime information
 ##
-SIM.physics.pdgfile = os.path.join(
-    os.environ.get("DD4HEP"), "DDG4/examples/particle.tbl"
-)
+SIM.physics.pdgfile = os.path.join(os.environ.get("DD4HEP"), "DDG4/examples/particle.tbl")
 
 ##  The global geant4 rangecut for secondary production
 ##
