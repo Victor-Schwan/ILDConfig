@@ -167,11 +167,6 @@ parser.add_argument(
     help="Run the Silicon-TPC-track-merging for ILD@FCC-ee",
     action="store_true",
 )
-parser.add_argument(
-    "--doHLR",
-    help="FCC models: do High Level Reco",
-    action="store_true",
-)
 
 
 def get_compact_file_path(detector_model: str):
@@ -305,10 +300,7 @@ if not reco_args.trackingOnly:
     if reco_args.runBeamCalReco:
         sequenceLoader.load("HighLevelReco/BeamCalReco")
 
-    if not is_FCCee_model:
-        sequenceLoader.load("HighLevelReco/HighLevelReco")
-    elif reco_args.doHLR:
-        sequenceLoader.load("HighLevelReco/HighLevelReco_FCCee")
+    sequenceLoader.load(f"HighLevelReco/HighLevelReco{'_FCCee' if is_FCCee_model else ''}")
 
     if not reco_args.noPFO:
         MyPfoAnalysis = MarlinProcessorWrapper("MyPfoAnalysis")
